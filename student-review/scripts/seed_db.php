@@ -48,7 +48,7 @@ try {
     ['name' => 'Avleen', 'urn' => '2203810', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => NULL, 'remark4' => NULL, 'status' => 'pending'], // Remark2 only
     ['name' => 'Ishpreet', 'urn' => '2203839', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => NULL, 'status' => 'pending'], // Remark3 only
     ['name' => 'Navkiran', 'urn' => '2203863', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'No action taken', 'status' => 'rejected'], // All remarks, status rejected (relieved)
-    ['name' => 'SuspendedStudent', 'urn' => '2203865', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'Suspension confirmed', 'status' => 'accepted'] // All remarks, status accepted (suspended)
+    ['name' => 'Harjot', 'urn' => '2203865', 'remark1' => 'First warning issued', 'remark2' => 'Second warning issued', 'remark3' => 'Final warning issued', 'remark4' => 'Suspension confirmed', 'status' => 'accepted'] // All remarks, status accepted (suspended)
   ];
 
   // Seed Students
