@@ -17,10 +17,31 @@ if (!isset($_SESSION["user_id"])) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 
-<body class="container">
-  <nav>
-    <h1 class="mb-4">Expense Tracker</h1>
-    <div class="row gap-4">
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <!-- Left side - Expense Tracker text -->
+    <a class="navbar-brand fs-3" href="#">Expense Tracker</a>
+
+    <!-- Right side - Collapsible content (for mobile responsiveness) -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <!-- Right side button -->
+      <button class="btn btn-primary mx-2" type="button">Some Button</button>
+      
+        <button class="btn btn-primary mx-2" type="button" id="addUser">Add User</button>
+     
+      <form action="../api/logout.php" method="POST">
+        <button type="submit" class="btn bg-danger text-white">Logout</button>
+      </form>
+    </div>
+  </div>
+</nav>
+<div class="container p-4">
+    <div class="row gap-4 mb-4">
       <div class="border bg-light rounded-4 p-4 col">
         <h2 class="fs-5 fw-bold">Months:</h2>
         <ul class="pagination px-3 py-1" id="pagination"></ul>
@@ -86,8 +107,8 @@ if (!isset($_SESSION["user_id"])) {
         </div>
       </div>
     </div>
-  </nav>
-
+  
+    </div>
   <script src="../js/dashboard.js"></script>
 </body>
 

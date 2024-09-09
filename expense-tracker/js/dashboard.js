@@ -2,36 +2,100 @@ const table = document.querySelector("#items-table");
 const pagination = document.querySelector("#pagination");
 const itemName = document.querySelector("#item-name");
 const itemAmount = document.querySelector("#item-amount");
+const userPage = document.querySelector("#addUser");
 let currentSheet = undefined;
 
-async function init() {
-  // Get sheets
-  const result = await fetch("../api/sheets.php");
-  const json = await result.json();
-  currentSheet = json[0].id;
-  for (const m of json) {
-    const mItem = document.createElement("li");
-    mItem.classList.add("page-item");
-    mItem.innerHTML = `<a class="page-link" id="sheet-${m.id}" data-id="${m.id}">${m.name}</a>`;
-    pagination.appendChild(mItem);
+async function fetchUsers() {
+  try {
+    const res = await fetch('../api/users.php');
+    console.log(res);
+    const data = await res.json();
+    console.log(data);
+    const table = document.querySelector("#usersTable");
+    table.innerHTML = "";
+    for (const row of data) {
+      const tr = document.createElement("tr");
+      const name = document.createElement("td");
+      name.innerText = row.name;
+      const type = document.createElement("td");
+      type.innerText = row.type;
+      tr.appendChild(name);
+      tr.appendChild(type);
+      tr.setAttribute("data-id", row.id);
+      tr.id = `item-${row.id}`;
+      table.appendChild(tr);
+    }
+
+  } catch (e) {
+    console.error(e.toString());
   }
-
-  // TODO: Admin only
-  // const addItem = document.createElement("li");
-  // addItem.classList.add("page-item");
-  // addItem.innerHTML = `
-  //   <a class="page-link" href="#">
-  //     +
-  //   </a>
-  // `;
-  // pagination.appendChild(addItem);
-
-  // Set currentSheet as active
-  switchActiveSheet();
-  fetchItems();
-  bindListeners();
 }
 
+userPage.addEventListener('click', function() {
+  window.location.href = "/user/";
+});
+
+async function init() {
+  // Fetch the sheets and display them
+  const result = await fetch("../api/sheets.php");
+  const json = await result.json();
+  currentSheet = json[0].id; // Set the first sheet as active by default
+  updatePagination(json);
+
+
+  // Set up event listeners
+  switchActiveSheet();
+  bindListeners();
+  fetchItems();
+}
+
+function updatePagination(sheets) {
+  pagination.innerHTML = ""; // Clear existing pagination
+
+  sheets.forEach((sheet) => {
+    const mItem = document.createElement("li");
+    mItem.classList.add("page-item");
+    mItem.innerHTML = `<a class="page-link" id="sheet-${sheet.id}" data-id="${sheet.id}">${sheet.name}</a>`;
+    pagination.appendChild(mItem);
+  });
+
+  // Admin-only: Add "+" button for creating new sheet
+  const addItem = document.createElement("li");
+  addItem.classList.add("page-item");
+  addItem.innerHTML = `
+    <a class="page-link" href="#" id="add-new-sheet">
+      +
+    </a>
+  `;
+  pagination.appendChild(addItem);
+
+  // Set up event listener for adding new sheet
+  document.querySelector("#add-new-sheet").addEventListener("click", (e) => {
+    e.preventDefault();
+    const newSheetName = prompt("Enter the name of the new sheet:");
+    if (newSheetName) {
+      fetch("../api/sheets.php", {
+        method: "POST",
+        body: JSON.stringify({ name: newSheetName }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (res.status != 201) throw "An error occurred while creating the new sheet";
+          return res.json();
+        })
+        .then((newSheet) => {
+          // Add the new sheet to pagination and make it active
+          sheets.push(newSheet);
+          currentSheet = newSheet.id;
+          updatePagination(sheets); // Refresh the pagination
+          switchActiveSheet(); // Set new sheet as active
+        })
+        .catch((e) => console.error(e.toString()));
+    }
+  });
+}
 function switchActiveSheet() {
   // Change active link
   document.querySelectorAll(".page-link").forEach((link) => {
@@ -41,6 +105,9 @@ function switchActiveSheet() {
   });
   fetchItems();
 }
+
+
+
 
 async function fetchItems() {
   // Get items for current sheet
