@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   }
 }
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['sa_user_id'])) {
   echo json_encode(['error' => 'Unauthorized']);
   http_response_code(401);
   exit();
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   try {
     $pdo->beginTransaction();
     $query = $pdo->prepare("INSERT INTO Arrangements (user_id, row_count, column_count, name) VALUES (:user_id, :row_count, :column_count, :name)");
-    $query->bindParam(':user_id', $_SESSION['user_id']);
+    $query->bindParam(':user_id', $_SESSION['sa_user_id']);
     $query->bindParam(':row_count', $row_count);
     $query->bindParam(':column_count', $column_count);
     $query->bindParam(':name', $name);
