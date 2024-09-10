@@ -37,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (password_verify($password, $user['password'])) {
         // Start the session
         session_start();
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_name'] = $user['name'];
-        $_SESSION['user_type'] = $user['type'];
+        $_SESSION['sr_user_id'] = $user['id'];
+        $_SESSION['sr_user_name'] = $user['name'];
+        $_SESSION['sr_user_type'] = $user['type'];
 
         // Redirect to dashboard
         http_response_code(200);

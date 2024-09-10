@@ -5,6 +5,7 @@ if (!isset($_SESSION["user_id"])) {
   header("Location: ../login");
   exit();
 }
+$user_type = $_SESSION["user_type"];
 ?>
 <!doctype html>
 <html lang="en">
@@ -18,33 +19,43 @@ if (!isset($_SESSION["user_id"])) {
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container-fluid">
-    <!-- Left side - Expense Tracker text -->
-    <a class="navbar-brand fs-3" href="#">Expense Tracker</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <!-- Left side - Expense Tracker text -->
+      <a class="navbar-brand fs-3" href="#">Expense Tracker</a>
 
-    <!-- Right side - Collapsible content (for mobile responsiveness) -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <!-- Right side - Collapsible content (for mobile responsiveness) -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <!-- Right side button -->
-      <button class="btn btn-primary mx-2" type="button">Some Button</button>
-      
-        <button class="btn btn-primary mx-2" type="button" id="addUser">Add User</button>
-     
-      <form action="../api/logout.php" method="POST">
-        <button type="submit" class="btn bg-danger text-white">Logout</button>
-      </form>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <!-- Right side button -->
+        <?php
+        if ($user_type === "admin") {
+          echo '<a href="../user/" class="btn btn-primary mx-2" type="button" id="addUser">Manage Users</a>';
+        }
+        ?>
+
+        <form action="../api/logout.php" method="POST">
+          <button type="submit" class="btn bg-danger text-white">Logout</button>
+        </form>
+      </div>
     </div>
-  </div>
-</nav>
-<div class="container p-4">
+  </nav>
+  <div class="container p-4">
     <div class="row gap-4 mb-4">
       <div class="border bg-light rounded-4 p-4 col">
-        <h2 class="fs-5 fw-bold">Months:</h2>
+        <h2 class="fs-5 fw-bold">Sheets:</h2>
         <ul class="pagination px-3 py-1" id="pagination"></ul>
+        <div class="d-flex gap-2">
+          <?php
+          if ($user_type === "admin") {
+            echo '<button class="btn btn-primary my-2" id="edit-sheet">Edit Sheet</button>';
+            echo '<button class="btn btn-danger my-2" id="delete-sheet">Delete Sheet</button>';
+          }
+          ?>
+        </div>
         <form class="row" id="add-item-form">
           <span class="col-5">
             <input
@@ -52,6 +63,7 @@ if (!isset($_SESSION["user_id"])) {
               type="text"
               id="item-name"
               name="purpose"
+              required
               placeholder="Item Name" />
           </span>
           <span class="col-5">
@@ -60,6 +72,7 @@ if (!isset($_SESSION["user_id"])) {
               type="number"
               id="item-amount"
               name="amount"
+              required
               placeholder="Item Amount" />
           </span>
           <span class="col-2">
@@ -107,8 +120,13 @@ if (!isset($_SESSION["user_id"])) {
         </div>
       </div>
     </div>
-  
-    </div>
+
+  </div>
+  <script>
+    <?php
+    echo "const user_type = '$user_type';";
+    ?>
+  </script>
   <script src="../js/dashboard.js"></script>
 </body>
 

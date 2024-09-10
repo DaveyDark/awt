@@ -5,14 +5,14 @@ session_start();
 include 'db.php';
 
 // Check if the user is authenticated (user_id, user_name, and user_type should be in session)
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_name']) || !isset($_SESSION['user_type'])) {
+if (!isset($_SESSION['sr_user_id']) || !isset($_SESSION['sr_user_name']) || !isset($_SESSION['sr_user_type'])) {
   http_response_code(401);
   echo json_encode(['error' => 'Unauthorized']);
   exit();
 }
 
 // User is authenticated
-$userType = $_SESSION['user_type'];
+$userType = $_SESSION['sr_user_type'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   try {
@@ -46,6 +46,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Handle the request to add a remark
   $student_id = $_POST['student_id'] ?? null;
+
+  if (!$student_id) {
+    // If no student_id is given, add a new student with the provided details
+    $name = $_POST['name'] ?? null;
+    $urn = $_POST['urn'] ?? null;
+    if (!$name || !$urn) {
+      http_response_code(400);
+      echo json_encode(['error' => 'name and urn are required']);
+      exit();
+    }
+
+    try {
+      $query = $pdo->prepare("INSERT INTO Students (name, urn, status) VALUES (:name, :urn, 'pending')");
+      $query->bindParam(':name', $name);
+      $query->bindParam(':urn', $urn);
+      $query->execute();
+
+      echo json_encode(['success' => 'Student added successfully']);
+      die();
+    } catch (PDOException $e) {
+      echo "Error: " . $e->getMessage();
+      http_response_code(500);
+      exit();
+    }
+  }
+
   $remark = $_POST['remark'] ?? null;
   $status = $_POST['status'] ?? null; // For l4 users, the status must also be provided
 

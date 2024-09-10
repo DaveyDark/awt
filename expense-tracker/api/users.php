@@ -2,159 +2,168 @@
 session_start();
 require_once "init.php";
 
-// Check if user is logged in
-if (!isset($_SESSION["user_id"])) {
-    http_response_code(401);
-    exit();
-}
-
-// Get the request method
-$requestMethod = $_SERVER['REQUEST_METHOD'];
-$json = json_decode(file_get_contents("php://input"));
-
-switch ($requestMethod) {
+try {
+  switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        // Fetch users
-        try {
-            $stmt = $pdo->prepare("SELECT id, name, type FROM Users WHERE deleted = 0");
-            $stmt->execute();
-            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($users);
-            http_response_code(200);
-        } catch (PDOException $e) {
-            echo json_encode(['error' => $e->getMessage()]);
-            http_response_code(500);
-        }
-        break;
+      // Check if user is logged in
+      if (!isset($_SESSION["user_id"])) {
+        http_response_code(401);
+        exit();
+      }
+
+      // Return a list of all users of type 'user' who are not deleted
+      $query = $pdo->prepare("SELECT id, name, createdAt FROM Users WHERE type = 'user' AND deleted = 0");
+      $query->execute();
+      echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
+      http_response_code(200);
+      break;
 
     case 'POST':
-        if (isset($_POST['action'])) {
-            $action = $_POST['action'];
+      // Creating a new 'user' user
+      $data = json_decode(file_get_contents('php://input'), true);
+      if (!isset($data['name']) || !isset($data['password'])) {
+        echo json_encode(['error' => 'Missing required data']);
+        http_response_code(400);
+        exit();
+      }
+      $name = $data['name'];
+      $password = $data['password'];
+      $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash the password
 
-            if ($action === 'register') {
-                // Register new user
-                if (isset($_POST['name']) && isset($_POST['password']) && isset($_POST['type'])) {
-                    $name = $_POST['name'];
-                    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hash the password
-                    $type = $_POST['type']; // admin or user
+      try {
+        // Begin transaction
+        $pdo->beginTransaction();
 
-                    try {
-                        $stmt = $pdo->prepare("INSERT INTO Users (name, password, type, deleted) VALUES (:name, :password, :type, 0)");
-                        $stmt->execute(['name' => $name, 'password' => $password, 'type' => $type]);
-                        echo json_encode(['message' => 'User registered successfully!']);
-                        http_response_code(201);
-                    } catch (PDOException $e) {
-                        echo json_encode(['error' => $e->getMessage()]);
-                        http_response_code(500);
-                    }
-                } else {
-                    echo json_encode(['error' => 'Please provide a name, password, and type.']);
-                    http_response_code(400);
-                }
-            }
-        }
-        break;
+        // Insert new user into the database
+        $query = $pdo->prepare("INSERT INTO Users (name, password, type, deleted) VALUES (:name, :password, 'user', 0)");
+        $query->execute([
+          'name' => $name,
+          'password' => $hashedPassword
+        ]);
+
+        // Get the last inserted user ID
+        $newUserId = $pdo->lastInsertId();
+
+        // Commit transaction
+        $pdo->commit();
+
+        // Return new user data to the frontend
+        echo json_encode(['id' => $newUserId, 'name' => $name]);
+        http_response_code(201);
+      } catch (PDOException $e) {
+        // Roll back the transaction in case of error
+        $pdo->rollBack();
+        echo json_encode(['error' => $e->getMessage()]);
+        http_response_code(500);
+      }
+      break;
 
     case 'PUT':
-        // Update user details
-        if (isset($json->id)) {
-            $id = $json->id;
-            $name = $json->name ?? null;
-            $password = $json->password ?? null;
-            $type = $json->type ?? null;
+      // Check if user is logged in
+      if (!isset($_SESSION["user_id"])) {
+        http_response_code(401);
+        exit();
+      }
 
-            try {
-                // Check if user exists
-                $userQuery = $pdo->prepare("SELECT * FROM Users WHERE id = :id AND deleted = 0");
-                $userQuery->execute(['id' => $id]);
-                $user = $userQuery->fetch(PDO::FETCH_ASSOC);
-                if (!$user) {
-                    echo json_encode(['error' => 'User not found']);
-                    http_response_code(404);
-                    exit();
-                }
+      // Editing a 'user' user's name and password
+      $data = json_decode(file_get_contents('php://input'), true);
+      if (!isset($data['id']) || !isset($data['name']) || !isset($data['password'])) {
+        echo json_encode(['error' => 'Missing required data']);
+        http_response_code(400);
+        exit();
+      }
+      $user_id = $data['id'];
+      $new_name = $data['name'];
+      $new_password = password_hash($data['password'], PASSWORD_DEFAULT); // Hash the new password
 
-                // Begin a transaction
-                $pdo->beginTransaction();
-                
-                if ($name) {
-                    $query = $pdo->prepare("UPDATE Users SET name = :name WHERE id = :id");
-                    $query->execute(['name' => $name, 'id' => $id]);
-                }
-                
-                if ($password) {
-                    $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-                    $query = $pdo->prepare("UPDATE Users SET password = :password WHERE id = :id");
-                    $query->execute(['password' => $passwordHash, 'id' => $id]);
-                }
+      try {
+        // Begin transaction
+        $pdo->beginTransaction();
 
-                if ($type) {
-                    $query = $pdo->prepare("UPDATE Users SET type = :type WHERE id = :id");
-                    $query->execute(['type' => $type, 'id' => $id]);
-                }
+        // Check if the user exists, is of type 'user', and is not deleted
+        $checkQuery = $pdo->prepare("SELECT * FROM Users WHERE id = :id AND type = 'user' AND deleted = 0");
+        $checkQuery->execute(['id' => $user_id]);
+        $user = $checkQuery->fetch(PDO::FETCH_ASSOC);
 
-                // Add log
-                $logQuery = $pdo->prepare("INSERT INTO Log (user_id, action) VALUES (:user_id, :action)");
-                $logQuery->execute([
-                    'user_id' => $_SESSION["user_id"],
-                    'action' => "Updated user $id"
-                ]);
-                
-                $pdo->commit();
-                http_response_code(200);
-            } catch (PDOException $e) {
-                $pdo->rollBack();
-                echo json_encode(['error' => $e->getMessage()]);
-                http_response_code(500);
-            }
-        } else {
-            echo json_encode(['error' => 'User ID not provided.']);
-            http_response_code(400);
+        if (!$user) {
+          echo json_encode(['error' => 'User not found']);
+          http_response_code(404);
+          exit();
         }
-        break;
+
+        // Update the user's name and password
+        $updateQuery = $pdo->prepare("UPDATE Users SET name = :name, password = :password WHERE id = :id");
+        $updateQuery->execute([
+          'name' => $new_name,
+          'password' => $new_password,
+          'id' => $user_id
+        ]);
+
+        // Commit transaction
+        $pdo->commit();
+
+        echo json_encode(['message' => 'User updated successfully']);
+        http_response_code(200);
+      } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo json_encode(['error' => $e->getMessage()]);
+        http_response_code(500);
+      }
+      break;
 
     case 'DELETE':
-        // Delete user
-        if (isset($json->id)) {
-            $id = $json->id;
+      // Check if user is logged in
+      if (!isset($_SESSION["user_id"])) {
+        http_response_code(401);
+        exit();
+      }
 
-            try {
-                // Check if user exists
-                $userQuery = $pdo->prepare("SELECT * FROM Users WHERE id = :id AND deleted = 0");
-                $userQuery->execute(['id' => $id]);
-                $user = $userQuery->fetch(PDO::FETCH_ASSOC);
-                if (!$user) {
-                    echo json_encode(['error' => 'User not found']);
-                    http_response_code(404);
-                    exit();
-                }
+      // Soft-delete a 'user' user
+      $data = json_decode(file_get_contents('php://input'), true);
+      if (!isset($data['id'])) {
+        echo json_encode(['error' => 'Missing required data']);
+        http_response_code(400);
+        exit();
+      }
+      $user_id = $data['id'];
 
-                // Begin a transaction
-                $pdo->beginTransaction();
-                $query = $pdo->prepare("UPDATE Users SET deleted = 1 WHERE id = :id");
-                $query->execute(['id' => $id]);
+      try {
+        // Begin transaction
+        $pdo->beginTransaction();
 
-                // Add log
-                $logQuery = $pdo->prepare("INSERT INTO Log (user_id, action) VALUES (:user_id, :action)");
-                $logQuery->execute([
-                    'user_id' => $_SESSION["user_id"],
-                    'action' => "Deleted user $id"
-                ]);
+        // Check if the user exists, is of type 'user', and is not deleted
+        $checkQuery = $pdo->prepare("SELECT * FROM Users WHERE id = :id AND type = 'user' AND deleted = 0");
+        $checkQuery->execute(['id' => $user_id]);
+        $user = $checkQuery->fetch(PDO::FETCH_ASSOC);
 
-                $pdo->commit();
-                http_response_code(204);
-            } catch (PDOException $e) {
-                $pdo->rollBack();
-                echo json_encode(['error' => $e->getMessage()]);
-                http_response_code(500);
-            }
-        } else {
-            echo json_encode(['error' => 'User ID not provided.']);
-            http_response_code(400);
+        if (!$user) {
+          echo json_encode(['error' => 'User not found']);
+          http_response_code(404);
+          exit();
         }
-        break;
+
+        // Soft-delete the user
+        $deleteQuery = $pdo->prepare("UPDATE Users SET deleted = 1 WHERE id = :id");
+        $deleteQuery->execute(['id' => $user_id]);
+
+        // Commit transaction
+        $pdo->commit();
+
+        echo json_encode(['message' => 'User deleted successfully']);
+        http_response_code(200);
+      } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo json_encode(['error' => $e->getMessage()]);
+        http_response_code(500);
+      }
+      break;
 
     default:
-        http_response_code(405);
+      http_response_code(405);
+      break;
+  }
+} catch (PDOException $e) {
+  $pdo->rollBack();
+  echo json_encode(['error' => $e->getMessage()]);
+  http_response_code(500);
 }
-?>

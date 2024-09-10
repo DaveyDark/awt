@@ -2,12 +2,13 @@ const table = document.querySelector("#items-table");
 const pagination = document.querySelector("#pagination");
 const itemName = document.querySelector("#item-name");
 const itemAmount = document.querySelector("#item-amount");
-const userPage = document.querySelector("#addUser");
+const deleteSheet = document.querySelector("#delete-sheet");
+const editSheet = document.querySelector("#edit-sheet");
 let currentSheet = undefined;
 
 async function fetchUsers() {
   try {
-    const res = await fetch('../api/users.php');
+    const res = await fetch("../api/users.php");
     console.log(res);
     const data = await res.json();
     console.log(data);
@@ -25,31 +26,24 @@ async function fetchUsers() {
       tr.id = `item-${row.id}`;
       table.appendChild(tr);
     }
-
   } catch (e) {
     console.error(e.toString());
   }
 }
 
-userPage.addEventListener('click', function() {
-  window.location.href = "/user/";
-});
-
-async function init() {
-  // Fetch the sheets and display them
+async function fetchSheets() {
   const result = await fetch("../api/sheets.php");
   const json = await result.json();
-  currentSheet = json[0].id; // Set the first sheet as active by default
+  if (!json.find((sheet) => sheet.id === currentSheet)) {
+    currentSheet = json[0].id;
+  }
   updatePagination(json);
-
-
-  // Set up event listeners
   switchActiveSheet();
   bindListeners();
   fetchItems();
 }
 
-function updatePagination(sheets) {
+async function updatePagination(sheets) {
   pagination.innerHTML = ""; // Clear existing pagination
 
   sheets.forEach((sheet) => {
@@ -59,43 +53,48 @@ function updatePagination(sheets) {
     pagination.appendChild(mItem);
   });
 
+  if (user_type !== "admin") return;
+
   // Admin-only: Add "+" button for creating new sheet
   const addItem = document.createElement("li");
   addItem.classList.add("page-item");
   addItem.innerHTML = `
-    <a class="page-link" href="#" id="add-new-sheet">
-      +
-    </a>
-  `;
+      <a class="page-link" href="#" id="add-new-sheet">
+        +
+      </a>
+      `;
   pagination.appendChild(addItem);
 
   // Set up event listener for adding new sheet
-  document.querySelector("#add-new-sheet").addEventListener("click", (e) => {
+  const addSheet = document.querySelector("#add-new-sheet");
+  addSheet.addEventListener("click", async (e) => {
     e.preventDefault();
     const newSheetName = prompt("Enter the name of the new sheet:");
-    if (newSheetName) {
-      fetch("../api/sheets.php", {
-        method: "POST",
-        body: JSON.stringify({ name: newSheetName }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          if (res.status != 201) throw "An error occurred while creating the new sheet";
-          return res.json();
-        })
-        .then((newSheet) => {
-          // Add the new sheet to pagination and make it active
-          sheets.push(newSheet);
-          currentSheet = newSheet.id;
-          updatePagination(sheets); // Refresh the pagination
-          switchActiveSheet(); // Set new sheet as active
-        })
-        .catch((e) => console.error(e.toString()));
+    if (newSheetName && newSheetName.trim() !== "") {
+      try {
+        const res = await fetch("../api/sheets.php", {
+          method: "POST",
+          body: JSON.stringify({ name: newSheetName }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.status !== 201) {
+          throw new Error("An error occurred while creating the new sheet");
+        }
+
+        const newSheet = await res.json();
+        // Fetch the updated list of sheets
+        currentSheet = parseInt(newSheet.id);
+        fetchSheets();
+      } catch (e) {
+        console.error(e.toString());
+      }
     }
   });
 }
+
 function switchActiveSheet() {
   // Change active link
   document.querySelectorAll(".page-link").forEach((link) => {
@@ -105,9 +104,6 @@ function switchActiveSheet() {
   });
   fetchItems();
 }
-
-
-
 
 async function fetchItems() {
   // Get items for current sheet
@@ -222,6 +218,7 @@ function bindListeners() {
     e.preventDefault();
     let formData = new FormData(e.target);
     formData.append("sheet_id", currentSheet);
+    e.target.reset();
     fetch("../api/expenses.php", {
       method: "POST",
       body: formData,
@@ -234,4 +231,44 @@ function bindListeners() {
   });
 }
 
-init();
+if (user_type === "admin") {
+  deleteSheet.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const sheet_id = currentSheet;
+    try {
+      const res = await fetch("../api/sheets.php", {
+        method: "DELETE",
+        body: JSON.stringify({ id: sheet_id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      // Fetch the updated list of sheets
+      fetchSheets();
+    } catch (e) {
+      console.error(e.toString());
+    }
+  });
+  editSheet.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const sheet_id = currentSheet;
+    const newSheetName = prompt("Enter the new name of the sheet:");
+    if (newSheetName && newSheetName.trim() !== "") {
+      try {
+        const res = await fetch("../api/sheets.php", {
+          method: "PUT",
+          body: JSON.stringify({ id: sheet_id, name: newSheetName }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        // Fetch the updated list of sheets
+        fetchSheets();
+      } catch (e) {
+        console.error(e.toString());
+      }
+    }
+  });
+}
+
+fetchSheets();

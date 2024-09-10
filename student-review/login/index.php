@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (isset($_SESSION["sr_user_id"])) {
+  header("Location: home");
+  exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 

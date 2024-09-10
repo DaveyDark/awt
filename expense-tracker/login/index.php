@@ -76,9 +76,6 @@
           <div class="d-grid">
             <button type="submit" class="btn btn-primary login-btn">Sign In</button>
           </div>
-          <div class="mt-3 text-center">
-            <a href="#">Forgot Password?</a>
-          </div>
         </form>
       </div>
     </div>
