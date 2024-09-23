@@ -18,6 +18,24 @@ if (!isset($_SESSION["sr_user_id"])) {
 
 <body class="container pt-3">
   <h1 class="text-center mb-2">Struck-Off Students List</h1>
+  <h2 class="fw-light">Welcome
+    <?php
+    switch ($_SESSION["sr_user_type"]) {
+      case "l1":
+        echo "Dealing Hand";
+        break;
+      case "l2":
+        echo "Section Incharge";
+        break;
+      case "l3":
+        echo "Deputy Registrar";
+        break;
+      case "l4":
+        echo "Dean Academics";
+        break;
+    }
+    ?>
+  </h2>
   <div class="d-flex justify-content-end my-2 gap-2">
     <?php
     if ($_SESSION["sr_user_type"] === "l1") {
