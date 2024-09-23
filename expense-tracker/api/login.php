@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $user = $query->fetch(PDO::FETCH_ASSOC);
 
       if (!$user) {
-        echo json_encode(['error' => 'User not found']);
         http_response_code(401);
+        header("Location: ../login");
         exit();
       }
 
@@ -62,11 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->commit();
 
         // Return error message
-        echo json_encode(['error' => 'Invalid password']);
         http_response_code(401);
+        header("Location: ../login");
       }
     } else {
-      echo json_encode(['error' => 'User not found']);
+      header("Location: ../login");
     }
   } catch (PDOException $e) {
     // Rollack any changes if something went wrong
