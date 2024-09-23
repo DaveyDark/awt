@@ -92,7 +92,9 @@ $user_type = $_SESSION["user_type"];
           </tbody>
         </table>
       </div>
-      <div class="border bg-light rounded-4 p-4 col">Graph</div>
+      <div class="border bg-light rounded-4 p-4 col">
+        <canvas id="graph"></canvas>
+      </div>
     </div>
 
     <!-- Edit Item Modal -->
@@ -127,6 +129,7 @@ $user_type = $_SESSION["user_type"];
     echo "const user_type = '$user_type';";
     ?>
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="../js/dashboard.js"></script>
 </body>
 
