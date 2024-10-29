@@ -1,0 +1,34 @@
+[68575:68575:1008/094625.374461:WARNING:chrome_main_delegate.cc(747)] This is Chrome version 129.0.6668.70 (not a warning)
+[68575:68596:1008/094625.717560:ERROR:object_proxy.cc(576)] Failed to call method: org.freedesktop.DBus.Properties.Get: object_path= /org/freedesktop/portal/desktop: org.freedesktop.DBus.Error.InvalidArgs: No such interface “org.freedesktop.portal.FileChooser”
+[68575:68596:1008/094625.717627:WARNING:property.cc(149)] version: GetAndBlock: failed.
+[68575:68596:1008/094625.717643:ERROR:select_file_dialog_linux_portal.cc(290)] Failed to read portal version property
+[68575:68575:1008/094625.787607:WARNING:account_consistency_mode_manager.cc(77)] Desktop Identity Consistency cannot be enabled as no OAuth client ID and client secret have been configured.
+[68575:68575:1008/094625.967068:WARNING:idle_linux.cc(110)] None of the known D-Bus ScreenSaver services could be used.
+[68610:68610:1008/094628.738613:WARNING:sandbox_linux.cc(430)] InitializeSandbox() called with multiple threads in process gpu-process.
+[68610:68610:1008/094628.739765:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[68575:68575:1008/094630.216949:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'bluetooth'.", source:  (0)
+[68575:68575:1008/094636.395011:INFO:CONSOLE(123)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v3/y-/r/cGn7G4DLmTd.js (123)
+[68575:68575:1008/094636.508237:INFO:CONSOLE(343)] "WAWebLoggerWorker initialized", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094636.510314:INFO:CONSOLE(343)] "[storage] start setSchemaVersions from fts worker interface", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094636.510732:INFO:CONSOLE(343)] "[storage] set schema versions: [model-storage,159,fts-storage,8,jobs-storage,1,lru-media-storage-idb,2,offd-storage,4,qpl-storage,0,signal-storage,6,worker-storage,1,sw,2,wawc,14,wawc_db_enc,2]. is worker? true", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68610:68610:1008/094648.482619:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[68610:68610:1008/094651.461046:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+[68610:68610:1008/094654.402606:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
+[68575:68575:1008/094654.465216:INFO:CONSOLE(343)] "FTS:Delegate: start indexer", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094654.465359:INFO:CONSOLE(343)] "FTS:Delegate: start perform init", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094654.465462:INFO:CONSOLE(343)] "FTS:Delegate: schema versions ready", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094654.465674:INFO:CONSOLE(343)] "FTS:Delegate: before db initialization", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094654.466215:INFO:CONSOLE(343)] "[storage] applying schema versions from [0 to 8] for the database: 'fts-storage'", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094654.489107:INFO:CONSOLE(343)] "[storage] applying schema versions from [0 to 159] for the database: 'model-storage'", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.639051:INFO:CONSOLE(343)] "FTS:Delegate: after db initialization", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.640760:INFO:CONSOLE(343)] "FTS:Manifest Writer: Set current version to ['3.1', '1']", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.641215:INFO:CONSOLE(343)] "FTS:Delegate: Inited", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.641344:INFO:CONSOLE(343)] "FTS:Delegate: Init indexing ops", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.719554:INFO:CONSOLE(343)] "Current message batch is from entry 0 of 0...", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.719722:INFO:CONSOLE(343)] "FTS:Indexer:indexQueuedBatch: Starting new batch size : 1000", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094656.719795:INFO:CONSOLE(343)] "FTS:Indexer:indexQueuedBatch: Completed", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094704.750298:INFO:CONSOLE(343)] "FTS:Indexer:indexQueuedBatch: Starting new batch size : 1000", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094704.826781:INFO:CONSOLE(343)] "FTS:Indexer:indexQueuedBatch: Completed", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68575:68575:1008/094713.332397:INFO:CONSOLE(343)] "FTS:Indexer:indexQueuedBatch: Starting new batch size : 1000", source: https://static.whatsapp.net/rsrc.php/v3/yN/r/EDsutU_TuaZ.js (343)
+[68614:68635:1008/094720.809186:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:248 to client_task_runner_.
+[68614:68635:1008/094720.809275:WARNING:sqlite_persistent_store_backend_base.cc(198)] Failed to post task from FlushAndNotifyInBackground@net/extras/sqlite/sqlite_persistent_store_backend_base.cc:248 to client_task_runner_.
