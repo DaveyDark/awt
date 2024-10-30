@@ -44,6 +44,6 @@ class CreateLogs extends Migration
 
   public function down()
   {
-    $this->forge->dropTable('log');
+    $this->forge->dropTable('logs');
   }
 }

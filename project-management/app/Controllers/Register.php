@@ -11,6 +11,12 @@ class Register extends BaseController
 {
   public function getIndex()
   {
+    // Check if user is already logged in
+    $session = session();
+    if ($session->get('role')) {
+      return redirect()->to('/');
+    }
+
     helper(['form']);
 
     return view('register');

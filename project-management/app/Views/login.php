@@ -11,6 +11,15 @@
 
 <body>
   <div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <!-- Show Validation Errors -->
+    <div class="position-absolute bottom-0 end-0 d-flex gap-1 z-3 flex-column p-4">
+      <?php $error = session()->get('error'); ?>
+      <?php if ($error): ?>
+        <div class="alert alert-danger">
+          <p><?= esc($error) ?></p>
+        </div>
+      <?php endif ?>
+    </div>
     <div class="row w-100">
       <div class="col-lg-10 col-xl-9 mx-auto">
         <div class="card flex-row border-0 shadow rounded-3 overflow-hidden">
@@ -19,15 +28,17 @@
           </div>
           <div class="card-body p-4 p-sm-5">
             <h5 class="card-title text-center mb-5 fw-light text-uppercase fs-2">Login</h5>
-            <form>
+            <form method="post" action="/login">
 
               <div class="form-floating mb-3">
-                <input type="email" class="form-control" id="floatingInputEmail" placeholder="name@example.com" required autofocus>
+                <input type="email" class="form-control" id="floatingInputEmail" name="email"
+                  placeholder="name@example.com" required autofocus value="<?= old('email') ?>">
                 <label for="floatingInputEmail">Email address</label>
               </div>
 
               <div class="form-floating mb-3">
-                <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+                <input type="password" class="form-control" id="floatingPassword" name="password"
+                  placeholder="Password" required value="<?= old('password') ?>">
                 <label for="floatingPassword">Password</label>
               </div>
 
