@@ -7,8 +7,8 @@ use CodeIgniter\Model;
 class StudentModel extends Model
 {
   protected $table            = 'students';
-  protected $primaryKey       = 'urn';
-  protected $useAutoIncrement = false;
+  protected $primaryKey       = 'id';
+  protected $useAutoIncrement = true;
 
   protected $allowedFields    = [
     'urn',

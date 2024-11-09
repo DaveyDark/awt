@@ -9,6 +9,12 @@ class CreateStudents extends Migration
   public function up()
   {
     $this->forge->addField([
+      'id' => [
+        'type'           => 'INT',
+        'constraint'     => 5,
+        'unsigned'       => true,
+        'auto_increment' => true,
+      ],
       'urn' => [
         'type'       => 'VARCHAR',
         'constraint' => 7,
@@ -54,7 +60,8 @@ class CreateStudents extends Migration
     ]);
 
     // Set URN as the primary key
-    $this->forge->addPrimaryKey('urn');
+    $this->forge->addPrimaryKey('id');
+    $this->forge->addUniqueKey('urn');
     $this->forge->addUniqueKey('email');
     $this->forge->addUniqueKey('crn');
 

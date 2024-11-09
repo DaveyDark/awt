@@ -26,3 +26,37 @@ body {
   color: white !important;
   background-color: #3b5998;
 }
+.project-card {
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+.project-card:hover {
+  transform: scale(1.03);
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+}
+
+#validation-alert {
+  display: none;
+}
+
+/* Add more line-clamp classes as needed */

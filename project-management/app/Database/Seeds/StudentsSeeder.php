@@ -21,7 +21,7 @@ class StudentsSeeder extends Seeder
       ],
       [
         'urn'        => '2203855',
-        'email'      => 'mayank2221074@example.com',
+        'email'      => 'mayank2221074@gndec.ac.in',
         'name'       => 'Mayank',
         'crn'        => '2221074',
         'branch'     => 'IT',

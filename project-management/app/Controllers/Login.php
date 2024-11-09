@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 class Login extends BaseController
 {
-  public function getIndex(): string
+  public function getIndex()
   {
     // Check if user is already logged in
     $session = session();
@@ -56,7 +56,7 @@ class Login extends BaseController
     $session->set([
       'role' => $role,
       'email' => $user['email'],
-      'id' => $role === 'student' ? $user['urn'] : $user['id'],
+      'id' => $user['id']
     ]);
 
     return redirect()->to('/');

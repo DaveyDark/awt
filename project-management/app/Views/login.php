@@ -11,15 +11,7 @@
 
 <body>
   <div class="container d-flex align-items-center justify-content-center min-vh-100">
-    <!-- Show Validation Errors -->
-    <div class="position-absolute bottom-0 end-0 d-flex gap-1 z-3 flex-column p-4">
-      <?php $error = session()->get('error'); ?>
-      <?php if ($error): ?>
-        <div class="alert alert-danger">
-          <p><?= esc($error) ?></p>
-        </div>
-      <?php endif ?>
-    </div>
+    <?php include 'partials/alerts.php' ?>
     <div class="row w-100">
       <div class="col-lg-10 col-xl-9 mx-auto">
         <div class="card flex-row border-0 shadow rounded-3 overflow-hidden">
