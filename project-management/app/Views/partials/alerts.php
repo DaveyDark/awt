@@ -1,5 +1,5 @@
 <?php $session = session() ?>
-<div class="position-absolute bottom-0 end-0 d-flex gap-1 z-3 flex-column p-4">
+<div class="position-fixed bottom-0 end-0 d-flex gap-1 z-3 flex-column p-4">
   <div class="alert alert-danger" id="validation-alert"></div>
   <?php $error = $session->get('error'); ?>
   <?php if ($error): ?>

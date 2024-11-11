@@ -191,7 +191,15 @@ class Projects extends BaseController
     if ($project['status'] !== 'in review') {
       return redirect()->back()->with('error', 'Project is not in review status');
     }
-    $projectModel->update($id, ['status' => 'active']);
+    $project['status'] = 'active';
+    $project['assigned'] = date('Y-m-d H:i:s');
+    $due = $this->request->getPost('due');
+    if ($due) {
+      $project['due'] = $due;
+    } else {
+      $project['due'] = date('Y-m-d', strtotime('+30 days'));
+    }
+    $projectModel->save($project);
     return redirect()->to('/projects/' . $id)->with('success', 'Project approved successfully');
   }
 
@@ -210,5 +218,90 @@ class Projects extends BaseController
     }
     $projectModel->update($id, ['status' => 'denied']);
     return redirect()->to('/projects/' . $id)->with('success', 'Project denied successfully');
+  }
+
+
+  public function postSubmit($projectId)
+  {
+    $session = session();
+    $role = $session->get('role');
+
+    // Check if user is a student and the project is active
+    if ($role !== 'student') {
+      return redirect()->back()->with('error', 'Unauthorized Access');
+    }
+
+    // Fetch the project and verify its status
+    $projectModel = new ProjectModel();
+    $project = $projectModel->find($projectId);
+    if ($project['status'] !== 'active') {
+      return redirect()->back()->with('error', 'Project is not active');
+    }
+
+    // Load ProjectSubmissionModel to save file metadata
+    $projectSubmissionModel = new ProjectSubmissionModel();
+    $uploadedFiles = $this->request->getFiles();
+    $uploadPath = WRITEPATH . 'uploads/projects/' . $projectId . '/';
+
+    // Ensure the directory exists
+    if (!is_dir($uploadPath)) {
+      mkdir($uploadPath, 0777, true);
+    }
+
+    foreach ($uploadedFiles['files'] as $file) {
+      if ($file->isValid() && !$file->hasMoved()) {
+        // Move the file to the server directory
+        $fileName = $file->getClientName();
+        $file->move($uploadPath, $fileName);
+
+        $projectSubmissionModel->insert([
+          'project_id' => $projectId,
+          'file' => $uploadPath . $fileName,
+        ]);
+      } else {
+        return redirect()->back()->with('error', 'File upload failed');
+      }
+    }
+
+    $project['status'] = 'submitted';
+    $project['submitted'] = date('Y-m-d H:i:s');
+    $projectModel->save($project);
+
+    return redirect()->to('/projects/' . $projectId)->with('success', 'Files submitted successfully');
+  }
+
+  public function getDownload($projectId, $fileId)
+  {
+    $session = session();
+    $role = $session->get('role');
+
+    // Restrict access to students, teachers, and admins
+    if (!in_array($role, ['student', 'teacher', 'admin'])) {
+      return redirect()->back()->with('error', 'Unauthorized Access');
+    }
+
+    $projectSubmissionModel = new ProjectSubmissionModel();
+    $projectModel = new ProjectModel();
+
+    // Check if the project exists and retrieve file details
+    $project = $projectModel->find($projectId);
+    if (!$project) {
+      return redirect()->back()->with('error', 'Project not found');
+    }
+
+    $file = $projectSubmissionModel->find($fileId);
+    if (!$file || $file['project_id'] != $projectId) {
+      return redirect()->back()->with('error', 'File not found');
+    }
+
+    $filePath = $file['file'];
+
+    // Check if file exists on the server
+    if (!file_exists($filePath)) {
+      return redirect()->back()->with('error', 'File not found on server');
+    }
+
+    // Return file for download
+    return $this->response->download($filePath, null)->setFileName(basename($filePath));
   }
 }

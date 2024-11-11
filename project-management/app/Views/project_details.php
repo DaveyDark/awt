@@ -95,6 +95,8 @@
           <h3>Review Project</h3>
           <div class="my-3">
             <form method="post" action="/projects/approve/<?= $project['id'] ?>" class="d-inline">
+              <label for="due" class="form-label">Due Date</label>
+              <input type="date" class="form-control" name="due" id="due" />
               <input type="submit" class="btn btn-success" value="Approve" />
             </form>
             <form method="post" action="/projects/deny/<?= $project['id'] ?>" class="d-inline">
@@ -104,38 +106,34 @@
         <?php endif; ?>
       </div>
     </div>
-    <h2>Submitted Files</h2>
-    <div class="row" id="submitted-files">
-      <div class="col-md-6 col-lg-4 mb-3">
-        <?php foreach ($project['submissions'] as $file): ?>
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><?= $file['name'] ?></h5>
-              <p class="card-text"><?= $file['created_at'] ?></p>
-              <a href="#" class="btn btn-primary">Download</a>
+    <?php if ($project['status'] === 'completed' || $project['status'] === 'submitted'): ?>
+      <h2>Submitted Files</h2>
+      <div class="row" id="submitted-files">
+        <div class="col-md-6 col-lg-4 mb-3">
+          <?php foreach ($project['submissions'] as $file): ?>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><?= $file['name'] ?></h5>
+                <p class="card-text"><?= $file['created_at'] ?></p>
+                <a href="<?= '/projects/download/' . $project['id'] . '/' . $file['id'] ?>" class="btn btn-primary">Download</a>
+              </div>
             </div>
-          </div>
-        <?php endforeach; ?>
-      </div>
-      <div class="col-md-4 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Design Mockups.zip</h5>
-            <p class="card-text">Uploaded on 2023-06-15</p>
-            <a href="#" class="btn btn-primary">Download</a>
-          </div>
+          <?php endforeach; ?>
         </div>
       </div>
-      <div class="col-md-4 mb-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Development Plan.docx</h5>
-            <p class="card-text">Uploaded on 2023-06-18</p>
-            <a href="#" class="btn btn-primary">Download</a>
+    <?php endif; ?>
+    <?php if ($project['status'] === 'active' && session()->get('role') === "student"): ?>
+      <div class="my-3">
+        <h2>Submit Files</h2>
+        <form method="post" action="/projects/submit/<?= $project['id'] ?>" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="submission-files" class="form-label">Upload Files</label>
+            <input type="file" name="files[]" id="submission-files" class="form-control" multiple required>
           </div>
-        </div>
+          <input type="submit" class="btn btn-primary" value="Submit Files" />
+        </form>
       </div>
-    </div>
+    <?php endif; ?>
     <div class="mt-4">
       <h2>Remarks</h2>
       <div class="mb-3">
