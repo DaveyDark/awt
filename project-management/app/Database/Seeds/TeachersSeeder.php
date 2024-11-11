@@ -11,8 +11,20 @@ class TeachersSeeder extends Seeder
   {
     $teachers = [
       [
-        'email'      => 'teacher@gndec.ac.in',
-        'name'       => 'Example Teacher',
+        'email'      => 'teacher1@gndec.ac.in',
+        'name'       => 'Example Teacher1',
+        'password'   => password_hash('password', PASSWORD_DEFAULT),
+        'created_at' => date('Y-m-d H:i:s')
+      ],
+      [
+        'email'      => 'teacher2@gndec.ac.in',
+        'name'       => 'Example Teacher2',
+        'password'   => password_hash('password', PASSWORD_DEFAULT),
+        'created_at' => date('Y-m-d H:i:s')
+      ],
+      [
+        'email'      => 'teacher3@gndec.ac.in',
+        'name'       => 'Example Teacher3',
         'password'   => password_hash('password', PASSWORD_DEFAULT),
         'created_at' => date('Y-m-d H:i:s')
       ],

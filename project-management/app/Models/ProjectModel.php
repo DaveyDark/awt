@@ -39,7 +39,7 @@ class ProjectModel extends Model
   protected $validationRules      = [
     'title' => 'required|min_length[3]|max_length[100]',
     'description' => 'required',
-    'status' => 'required|in_list[active,in review,submitted,completed]',
+    'status' => 'required|in_list[active,in review,submitted,completed,denied]',
   ];
   protected $validationMessages   = [
     'title' => [

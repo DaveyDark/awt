@@ -1,4 +1,4 @@
-<div class="col-md-6 col-lg-4">
+<div class="col-md-6 col-lg-4" onclick="window.location.href = 'projects/<?= $project['id'] ?>'">
   <div class="card project-card h-100 shadow-sm">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start mb-2">
@@ -14,6 +14,9 @@
                               case 'completed':
                               case 'submitted':
                                 echo 'bg-primary';
+                                break;
+                              case 'denied':
+                                echo 'bg-danger';
                                 break;
                             }
                             ?> text-capitalize"><?= $project['status'] ?></span>

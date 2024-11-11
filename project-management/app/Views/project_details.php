@@ -5,7 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Details</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/global.css" rel="stylesheet">
+  <script src="/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -38,7 +40,10 @@
                   break;
                 case 'completed':
                 case 'submitted':
-                  echo 'bg-primary bg-light';
+                  echo 'bg-primary text-light';
+                  break;
+                case 'denied':
+                  echo 'bg-danger text-light';
                   break;
               } ?>" id="status" value="<?= $project['status'] ?>" readonly>
         </div>
@@ -71,6 +76,32 @@
             <li class="list-group-item"><?= $member ?></li>
           <?php endforeach; ?>
         </ul>
+        <div class="my-3">
+          <label for="teacher" class="form-label">Teacher</label>
+          <input type="text" class="form-control" id="teacher" value="<?= $project['teacher'] ?>" readonly>
+        </div>
+        <?php if ($project['status'] === 'in review' && session()->get('role') === "admin"): ?>
+          <form method="post" action="/projects/assignTeacher/<?= $project['id'] ?>" class="bg-secondary p-2 rounded">
+            <label for="teacherDD" class="form-label text-light">Assign Teacher</label>
+            <select name="teacher" id="teacherDD" class="form-control">
+              <?php foreach ($teachers as $teacher): ?>
+                <option value="<?= $teacher['id'] ?>"><?= $teacher['name'] ?></option>
+              <?php endforeach; ?>
+            </select>
+            <input type="submit" class="form-control mt-1 btn btn-primary" value="Assign" />
+          </form>
+        <?php endif; ?>
+        <?php if ($project['status'] === 'in review' && session()->get('role') === "teacher"): ?>
+          <h3>Review Project</h3>
+          <div class="my-3">
+            <form method="post" action="/projects/approve/<?= $project['id'] ?>" class="d-inline">
+              <input type="submit" class="btn btn-success" value="Approve" />
+            </form>
+            <form method="post" action="/projects/deny/<?= $project['id'] ?>" class="d-inline">
+              <input type="submit" class="btn btn-danger" value="Deny" />
+            </form>
+          </div>
+        <?php endif; ?>
       </div>
     </div>
     <h2>Submitted Files</h2>
@@ -121,8 +152,6 @@
       </div>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 
 </html>

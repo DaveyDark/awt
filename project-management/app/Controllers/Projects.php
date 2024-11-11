@@ -76,9 +76,12 @@ class Projects extends BaseController
       $project['submissions'][] = $submission;
     }
 
+    $teachers = $teacherModel->findAll();
+
     return view('project_details', [
       'name' => $name,
       'project' => $project,
+      'teachers' => $teachers,
     ]);
   }
   public function getNew()
@@ -145,5 +148,67 @@ class Projects extends BaseController
     }
 
     return redirect()->to('/')->with('success', 'Project created successfully');
+  }
+
+  public function postAssignTeacher($projectId)
+  {
+    $session = session();
+    $role = $session->get('role');
+    if ($role !== 'admin') {
+      return redirect()->to('/')->with('error', 'Unauthorized Access');
+    }
+    $teacherId = $this->request->getPost('teacher');
+    if (!$teacherId) {
+      return redirect()->back()->with('error', 'Teacher ID is required');
+    }
+    $teacherModel = new TeacherModel();
+    $projectModel = new ProjectModel();
+    $project = $projectModel->find($projectId);
+
+    // If project is not in review status, redirect back
+    if ($project['status'] !== 'in review') {
+      return redirect()->back()->with('error', 'Project is not in review status');
+    }
+
+    $teacher = $teacherModel->find($teacherId);
+    if (!$teacher) {
+      return redirect()->back()->with('error', 'Teacher not found');
+    }
+    $projectModel->update($projectId, ['teacher_id' => $teacher['id']]);
+    return redirect()->to('/projects/' . $projectId)->with('success', 'Teacher assigned successfully');
+  }
+
+  public function postApprove($id)
+  {
+    // Approve the project, change status from in review to active
+    $session = session();
+    $role = $session->get('role');
+    if ($role !== 'teacher') {
+      return redirect()->back()->with('error', 'Unauthorized Access');
+    }
+    $projectModel = new ProjectModel();
+    $project = $projectModel->find($id);
+    if ($project['status'] !== 'in review') {
+      return redirect()->back()->with('error', 'Project is not in review status');
+    }
+    $projectModel->update($id, ['status' => 'active']);
+    return redirect()->to('/projects/' . $id)->with('success', 'Project approved successfully');
+  }
+
+  public function postDeny($id)
+  {
+    // Deny the project, change status from in review to denied
+    $session = session();
+    $role = $session->get('role');
+    if ($role !== 'teacher') {
+      return redirect()->back()->with('error', 'Unauthorized Access');
+    }
+    $projectModel = new ProjectModel();
+    $project = $projectModel->find($id);
+    if ($project['status'] !== 'in review') {
+      return redirect()->back()->with('error', 'Project is not in review status');
+    }
+    $projectModel->update($id, ['status' => 'denied']);
+    return redirect()->to('/projects/' . $id)->with('success', 'Project denied successfully');
   }
 }

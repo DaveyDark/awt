@@ -16,8 +16,10 @@ class ProjectsSeeder extends Seeder
 
     // Get teacher ID
     $teacherModel = new TeacherModel();
-    $teacher = $teacherModel->where('email', 'teacher@gndec.ac.in')->first();
-    $teacherId = $teacher['id'];
+    $teacher1 = $teacherModel->where('email', 'teacher1@gndec.ac.in')->first();
+    $teacherId1 = $teacher1['id'];
+    $teacher2 = $teacherModel->where('email', 'teacher2@gndec.ac.in')->first();
+    $teacherId2 = $teacher2['id'];
 
     // Project Data
     $projects = [
@@ -27,7 +29,7 @@ class ProjectsSeeder extends Seeder
         'status'      => 'active',
         'assigned'    => date('Y-m-d', strtotime('2024-01-10')),
         'due'         => date('Y-m-d', strtotime('2024-04-15')),
-        'teacher_id'  => $teacherId,
+        'teacher_id'  => $teacherId1,
         'student_id'  => '1',
         'internal_remarks' => 'Initial review pending',
         'external_remarks' => null,
@@ -39,7 +41,7 @@ class ProjectsSeeder extends Seeder
         'status'      => 'in review',
         'assigned'    => date('Y-m-d', strtotime('2024-02-01')),
         'due'         => date('Y-m-d', strtotime('2024-06-01')),
-        'teacher_id'  => $teacherId,
+        'teacher_id'  => $teacherId2,
         'student_id'  => '2',
         'internal_remarks' => null,
         'external_remarks' => null,
