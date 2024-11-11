@@ -51,6 +51,11 @@ class Home extends BaseController
 
       // Retrieve projects where the teacher is assigned
       $projects = $projectModel->where('teacher_id', $teacher['id'])->findAll();
+    } else {
+      // Admin role
+      // Show all projects
+      $projects = $projectModel->findAll();
+      $name = 'Admin';
     }
 
     // Process each project to add members count and teacher name
