@@ -109,8 +109,8 @@
     <?php if ($project['status'] === 'completed' || $project['status'] === 'submitted'): ?>
       <h2>Submitted Files</h2>
       <div class="row" id="submitted-files">
-        <div class="col-md-6 col-lg-4 mb-3">
-          <?php foreach ($project['submissions'] as $file): ?>
+        <?php foreach ($project['submissions'] as $file): ?>
+          <div class="col-md-6 col-lg-4 mb-3">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title"><?= $file['name'] ?></h5>
@@ -118,8 +118,8 @@
                 <a href="<?= '/projects/download/' . $project['id'] . '/' . $file['id'] ?>" class="btn btn-primary">Download</a>
               </div>
             </div>
-          <?php endforeach; ?>
-        </div>
+          </div>
+        <?php endforeach; ?>
       </div>
     <?php endif; ?>
     <?php if ($project['status'] === 'active' && session()->get('role') === "student"): ?>
