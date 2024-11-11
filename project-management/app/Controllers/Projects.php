@@ -304,4 +304,25 @@ class Projects extends BaseController
     // Return file for download
     return $this->response->download($filePath, null)->setFileName(basename($filePath));
   }
+
+  public function postRemarks($projectId)
+  {
+    $session = session();
+    $role = $session->get('role');
+    // Check if user is a teacher or admin
+    if (!in_array($role, ['teacher', 'admin'])) {
+      return redirect()->back()->with('error', 'Unauthorized Access');
+    }
+    $projectModel = new ProjectModel();
+    $project = $projectModel->find($projectId);
+    if (!$project) {
+      return redirect()->back()->with('error', 'Project not found');
+    }
+    $project['internal_remarks'] = $this->request->getPost('internal_remarks');
+    $project['external_remarks'] = $this->request->getPost('external_remarks');
+    $project['completed'] = date('Y-m-d H:i:s');
+    $project['status'] = 'completed';
+    $projectModel->save($project);
+    return redirect()->to('/projects/' . $projectId)->with('success', 'Remarks added successfully');
+  }
 }

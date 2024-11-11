@@ -134,21 +134,36 @@
         </form>
       </div>
     <?php endif; ?>
-    <div class="mt-4">
-      <h2>Remarks</h2>
-      <div class="mb-3">
-        <label for="internal-remarks" class="form-label">Internal Remarks</label>
-        <textarea class="form-control" id="internal-remarks" rows="3" readonly>
+    <?php if ($project['status'] === 'completed'): ?>
+      <div class="mt-4">
+        <h2>Remarks</h2>
+        <div class="mb-3">
+          <label for="internal-remarks" class="form-label">Internal Remarks</label>
+          <textarea class="form-control" id="internal-remarks" rows="3" readonly>
             <?= $project['internal_remarks'] ?? "N/A" ?>
           </textarea>
-      </div>
-      <div class="mb-3">
-        <label for="external-remarks" class="form-label">External Remarks</label>
-        <textarea class="form-control" id="external-remarks" rows="3" readonly>
+        </div>
+        <div class="mb-3">
+          <label for="external-remarks" class="form-label">External Remarks</label>
+          <textarea class="form-control" id="external-remarks" rows="3" readonly>
             <?= $project['external_remarks'] ?? "N/A" ?>
           </textarea>
+        </div>
       </div>
-    </div>
+    <?php endif; ?>
+    <?php if (session()->get('role') === 'teacher' && $project['status'] === 'submitted'): ?>
+      <form action="/projects/remarks/<?= $project['id'] ?>" method="post">
+        <div class="form-group">
+          <label for="internal_remarks">Internal remarks</label>
+          <textarea id="internal_remarks" name="internal_remarks" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="external_remarks">External remarks</label>
+          <textarea id="external_remarks" name="external_remarks" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit remarks</button>
+      </form>
+    <?php endif; ?>
   </div>
 </body>
 
