@@ -1,0 +1,23 @@
+{
+    "name": "gndec/student-attendance-system",
+    "description": "A web-based system for managing student attendance using QR codes",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "phpmailer/phpmailer": "^6.8",
+        "endroid/qr-code": "^4.6",
+        "symfony/polyfill-iconv": "^1.32"
+    },
+    "authors": [
+        {
+            "name": "Devesh",
+            "email": "devesh97531@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "StudentAttendance\\": "src/"
+        }
+    }
+}

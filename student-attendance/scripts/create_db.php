@@ -1,8 +1,17 @@
 <?php
-$servername = "localhost";
-$dbusername = "root";
-$dbpassword = "";
-$dbname = "student_attendance";
+/**
+ * Database Creation Script
+ * 
+ * This script creates the database and tables for the Student Attendance System.
+ * It uses the configuration settings from config/database.php.
+ */
+
+// Load database configuration
+$config = require_once __DIR__ . '/../config/database.php';
+$servername = $config['host'];
+$dbusername = $config['username'];
+$dbpassword = $config['password'];
+$dbname = $config['database'];
 
 try {
   $pdo = new PDO("mysql:host=$servername", $dbusername, $dbpassword);
@@ -26,7 +35,9 @@ try {
       CREATE TABLE IF NOT EXISTS Students (
           urn VARCHAR(7) PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
-          branch VARCHAR(3) NOT NULL,
+          branch VARCHAR(10) NOT NULL,
+          phone VARCHAR(15) NULL,
+          email VARCHAR(255) NULL,
           deleted BOOLEAN NOT NULL DEFAULT FALSE,
           createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

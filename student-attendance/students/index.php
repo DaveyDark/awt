@@ -26,10 +26,12 @@ if (!isset($_SESSION['sta_user_id'])) {
   <table class="table table-striped table-bordered table-responsive">
     <thead>
       <tr>
-        <th class="col-2">URN</th>
-        <th class="col-4">Name</th>
-        <th class="col-2">Branch</th>
-        <th class="col-4">Actions</th>
+        <th class="col-1">URN</th>
+        <th class="col-3">Name</th>
+        <th class="col-1">Branch</th>
+        <th class="col-2">Phone</th>
+        <th class="col-3">Email</th>
+        <th class="col-2">Actions</th>
       </tr>
     </thead>
     <tbody id="students-table"></tbody>
@@ -57,6 +59,14 @@ if (!isset($_SESSION['sta_user_id'])) {
             <div class="mb-3">
               <label for="branch" class="form-label">Branch</label>
               <input type="text" class="form-control" id="branch" name="branch" required>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone</label>
+              <input type="text" class="form-control" id="phone" name="phone">
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email">
             </div>
             <button type="submit" class="btn btn-primary" id="saveStudentBtn">Save</button>
           </form>

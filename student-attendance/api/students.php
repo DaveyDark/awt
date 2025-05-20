@@ -14,7 +14,7 @@ try {
         $urn = $_GET['urn'];
 
         // Prepare a query to get the details of the specific student
-        $query = $pdo->prepare("SELECT urn, name, branch, createdAt FROM Students WHERE urn = :urn AND deleted = 0");
+        $query = $pdo->prepare("SELECT urn, name, branch, phone, email, createdAt FROM Students WHERE urn = :urn AND deleted = 0");
         $query->execute(['urn' => $urn]);
 
         $student = $query->fetch(PDO::FETCH_ASSOC);
@@ -32,7 +32,7 @@ try {
 
       } else {
         // Return a list of all students that are not deleted
-        $query = $pdo->prepare("SELECT urn, name, branch, createdAt FROM Students WHERE deleted = 0");
+        $query = $pdo->prepare("SELECT urn, name, branch, phone, email, createdAt FROM Students WHERE deleted = 0");
         $query->execute();
         echo json_encode($query->fetchAll(PDO::FETCH_ASSOC));
         http_response_code(200); // OK
@@ -56,24 +56,28 @@ try {
       $urn = $data['urn'];
       $name = $data['name'];
       $branch = $data['branch'];
+      $phone = isset($data['phone']) ? $data['phone'] : null;
+      $email = isset($data['email']) ? $data['email'] : null;
 
       try {
         // Begin transaction
         $pdo->beginTransaction();
 
         // Insert new student into the database
-        $query = $pdo->prepare("INSERT INTO Students (urn, name, branch, deleted) VALUES (:urn, :name, :branch, 0)");
+        $query = $pdo->prepare("INSERT INTO Students (urn, name, branch, phone, email, deleted) VALUES (:urn, :name, :branch, :phone, :email, 0)");
         $query->execute([
           'urn' => $urn,
           'name' => $name,
-          'branch' => $branch
+          'branch' => $branch,
+          'phone' => $phone,
+          'email' => $email
         ]);
 
         // Commit transaction
         $pdo->commit();
 
         // Return new student data to the frontend
-        echo json_encode(['urn' => $urn, 'name' => $name, 'branch' => $branch]);
+        echo json_encode(['urn' => $urn, 'name' => $name, 'branch' => $branch, 'phone' => $phone, 'email' => $email]);
         http_response_code(201); // Created
       } catch (PDOException $e) {
         // Rollback transaction in case of error
@@ -101,6 +105,8 @@ try {
       $urn = $data['urn'];
       $name = $data['name'];
       $branch = $data['branch'];
+      $phone = isset($data['phone']) ? $data['phone'] : null;
+      $email = isset($data['email']) ? $data['email'] : null;
 
       try {
         // Begin transaction
@@ -118,10 +124,12 @@ try {
         }
 
         // Update student details
-        $updateQuery = $pdo->prepare("UPDATE Students SET name = :name, branch = :branch WHERE urn = :urn");
+        $updateQuery = $pdo->prepare("UPDATE Students SET name = :name, branch = :branch, phone = :phone, email = :email WHERE urn = :urn");
         $updateQuery->execute([
           'name' => $name,
           'branch' => $branch,
+          'phone' => $phone,
+          'email' => $email,
           'urn' => $urn
         ]);
 

@@ -18,10 +18,12 @@ const fetchStudents = async () => {
         <td>${student.urn}</td>
         <td>${student.name}</td>
         <td>${student.branch}</td>
+        <td>${student.phone || '-'}</td>
+        <td>${student.email || '-'}</td>
         <td>
-          <button class="btn btn-warning" onclick="editStudent(${student.id})">Edit</button>
-          <button class="btn btn-danger" onclick="deleteStudent(${student.id})">Delete</button>
-          <button class="btn btn-success" onclick="generateQR('${student.urn}', '${student.name}')">Get QR</button>
+          <button class="btn btn-warning btn-sm" onclick="openEditStudentModal('${student.urn}')">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteStudent('${student.urn}')">Delete</button>
+          <button class="btn btn-success btn-sm" onclick="generateQR('${student.urn}', '${student.name}')">QR</button>
         </td>
       `;
       studentsTable.appendChild(row);
@@ -40,6 +42,7 @@ document.getElementById("add-student-btn").addEventListener("click", () => {
 });
 
 // Open modal for editing an existing student
+// Function to edit a student - called from the Edit button
 const openEditStudentModal = async (urn) => {
   try {
     const response = await fetch(`../api/students.php?urn=${urn}`);
@@ -49,7 +52,8 @@ const openEditStudentModal = async (urn) => {
     document.getElementById("urn").value = student.urn;
     document.getElementById("name").value = student.name;
     document.getElementById("branch").value = student.branch;
-    document.getElementById("urn").value = student.urn;
+    document.getElementById("phone").value = student.phone || '';
+    document.getElementById("email").value = student.email || '';
 
     // Update modal title and button text
     studentModalLabel.innerText = "Edit Student";
@@ -92,7 +96,7 @@ studentForm.addEventListener("submit", async (event) => {
   }
 });
 
-// Function to delete a student
+// Function to delete a student - called from the Delete button
 const deleteStudent = async (urn) => {
   if (confirm("Are you sure you want to delete this student?")) {
     try {
@@ -115,6 +119,7 @@ const deleteStudent = async (urn) => {
   }
 };
 
+// Function to generate and download a QR code - called from the QR button
 const generateQR = (urn, name) => {
   const qrCanvas = document.createElement("canvas"); // Create a canvas to render the QR code
 

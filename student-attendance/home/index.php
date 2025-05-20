@@ -23,6 +23,7 @@ if (!isset($_SESSION['sta_user_id'])) {
     <div class="d-flex flex-sm-row flex-column gap-2">
       <a href="../attendance" class="btn btn-light">Show Attendance</a>
       <a href="../students" class="btn btn-light">Manage Students</a>
+      <a href="../send_qr" class="btn btn-light">Send QR Codes</a>
       <a href="../api/logout.php" class="btn btn-danger">Logout</a>
     </div>
   </div>

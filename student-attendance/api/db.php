@@ -1,12 +1,24 @@
 <?php
-$servername = "localhost";
-$dbusername = "root";
-$dbpassword = "";
-$dbname = "student_attendance";
+/**
+ * Database Connection
+ * 
+ * This file establishes a connection to the database using the configuration settings
+ * from config/database.php.
+ */
+
+// Load database configuration
+$config = require_once __DIR__ . '/../config/database.php';
+$servername = $config['host'];
+$dbusername = $config['username'];
+$dbpassword = $config['password'];
+$dbname = $config['database'];
+$port = $config['port'];
+$charset = $config['charset'];
 
 try {
   // Create a new PDO instance with the database connection
-  $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $dbusername, $dbpassword);
+  $dsn = "mysql:host=$servername;dbname=$dbname;port=$port;charset=$charset";
+  $pdo = new PDO($dsn, $dbusername, $dbpassword);
   // Set PDO error mode to exception
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
